@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BodyTemp.Repositories.Interfaces;
+using BodyTemp.Services.Interfaces;
+using BodyTemp.WebAPI.ViewModels.Response;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BodyTemp.WebAPI.Controllers
@@ -7,17 +10,25 @@ namespace BodyTemp.WebAPI.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
+        private readonly IEmployeeService _employeeService;
         private readonly ILogger<EmployeesController> _logger;
 
-        public EmployeesController(ILogger<EmployeesController> logger)
+        public EmployeesController(IEmployeeService employeeService, ILogger<EmployeesController> logger)
         {
-            _logger = logger;
+            _employeeService = employeeService ?? throw new ArgumentNullException(nameof(employeeService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet]
         public async Task<IActionResult> GetEmployees()
         {
-            throw new NotImplementedException();
+            var result = await _employeeService.GetEmployees();
+            return Ok(new BaseResponse
+            {
+                Success = true,
+                Message = "",
+                Data = result
+            });
         }
 
         [HttpGet]

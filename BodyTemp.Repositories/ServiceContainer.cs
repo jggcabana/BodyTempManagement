@@ -13,7 +13,6 @@ namespace BodyTemp.Repositories
     {
         public static IServiceCollection AddPersistence(this IServiceCollection services)
         {
-
             services.AddDbContext<ApplicationDbContext>(
                 options =>
                 {

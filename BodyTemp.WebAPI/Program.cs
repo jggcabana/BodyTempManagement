@@ -1,4 +1,8 @@
 using BodyTemp.Repositories;
+using BodyTemp.Repositories.Interfaces;
+using BodyTemp.Repositories.Repositories;
+using BodyTemp.Services.Interfaces;
+using BodyTemp.Services.Services;
 using Serilog;
 
 namespace BodyTemp.WebAPI
@@ -15,6 +19,8 @@ namespace BodyTemp.WebAPI
 
             // Add services to the container.
             builder.Services.AddPersistence();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
