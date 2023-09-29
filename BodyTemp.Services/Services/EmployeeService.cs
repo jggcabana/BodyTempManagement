@@ -1,4 +1,5 @@
 ﻿using BodyTemp.Entities.DTOs;
+using BodyTemp.Entities.Enums;
 using BodyTemp.Repositories.Interfaces;
 using BodyTemp.Services.Interfaces;
 using BodyTemp.Services.Mappers;
@@ -23,10 +24,20 @@ namespace BodyTemp.Services.Services
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<EmployeeDTO>> GetEmployees()
+        public async Task<IEnumerable<EmployeeDTO>> GetEmployees(
+            int? id = null
+            , string employeeNumber = ""
+            , string firstName = ""
+            , string lastName = ""
+            , TemperatureFormat tempFormat = TemperatureFormat.Celsius
+            , decimal? tempFrom = null
+            , decimal? tempTo = null
+            , DateTime? dateFrom = null
+            , DateTime? dateTo = null
+            )
         {
             var employees = new List<EmployeeDTO>();
-            var results = await _employeeRepository.GetAllAsync();
+            var results = await _employeeRepository.GetAllAsync(id, employeeNumber, firstName, lastName, tempFormat, tempFrom, tempTo, dateFrom, dateTo);
 
             foreach(var result in results)
             {

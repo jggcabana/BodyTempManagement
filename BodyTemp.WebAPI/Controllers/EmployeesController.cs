@@ -1,4 +1,5 @@
-﻿using BodyTemp.Repositories.Interfaces;
+﻿using BodyTemp.Entities.Enums;
+using BodyTemp.Repositories.Interfaces;
 using BodyTemp.Services.Interfaces;
 using BodyTemp.WebAPI.ViewModels.Response;
 using Microsoft.AspNetCore.Http;
@@ -20,9 +21,19 @@ namespace BodyTemp.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployees()
+        public async Task<IActionResult> GetEmployees(
+            [FromQuery] int? id = null
+            , [FromQuery] string? employeeNumber = null
+            , [FromQuery] string? firstName = null
+            , [FromQuery] string? lastName = null
+            , [FromQuery] TemperatureFormat tempFormat = TemperatureFormat.Celsius
+            , [FromQuery] decimal? tempFrom = null
+            , [FromQuery] decimal? tempTo = null
+            , [FromQuery] DateTime? dateFrom = null
+            , [FromQuery] DateTime? dateTo = null
+            )
         {
-            var result = await _employeeService.GetEmployees();
+            var result = await _employeeService.GetEmployees(id, employeeNumber, firstName, lastName, tempFormat, tempFrom, tempTo, dateFrom, dateTo);
             return Ok(new BaseResponse
             {
                 Success = true,
