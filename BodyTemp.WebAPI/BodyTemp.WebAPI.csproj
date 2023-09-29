@@ -7,7 +7,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BodyTemp.Entities\BodyTemp.Entities.csproj" />
+    <ProjectReference Include="..\BodyTemp.Repositories\BodyTemp.Repositories.csproj" />
+    <ProjectReference Include="..\BodyTemp.Services\BodyTemp.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\Request\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\JGC\source\repos\BodyTemp\BodyTemp.WebAPI\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\JGC\source\repos\BodyTemp\BodyTemp.WebAPI\.editorconfig" />
   </ItemGroup>
 
 </Project>

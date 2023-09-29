@@ -1,3 +1,6 @@
+using BodyTemp.Repositories;
+using Serilog;
+
 namespace BodyTemp.WebAPI
 {
     public class Program
@@ -6,7 +9,12 @@ namespace BodyTemp.WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Add serilog
+            builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
+                .ReadFrom.Configuration(context.Configuration));
+
             // Add services to the container.
+            builder.Services.AddPersistence();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
