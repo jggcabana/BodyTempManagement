@@ -1,13 +1,11 @@
 ﻿using BodyTemp.Entities.DTOs;
 using BodyTemp.Entities.Enums;
+using BodyTemp.Entities.Exceptions;
+using BodyTemp.Entities.Models;
 using BodyTemp.Repositories.Interfaces;
+using BodyTemp.Services.Helpers;
 using BodyTemp.Services.Interfaces;
 using BodyTemp.Services.Mappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BodyTemp.Services.Services
 {
@@ -19,9 +17,40 @@ namespace BodyTemp.Services.Services
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<IEnumerable<EmployeeDTO>> GetEmployee(int employeeId)
+        public async Task<EmployeeDTO> AddEmployee(string employeeNumber, string firstName, string lastName)
         {
-            throw new NotImplementedException();
+            var exists = (await _employeeRepository.GetByEmployeeNumberAsync(employeeNumber)) != null;
+
+            if (exists)
+                throw new BodyTempException("Employee number already exists.");
+
+            var result = await _employeeRepository.AddAsync(new Employee
+            {
+                Id = 0,
+                EmployeeNumber = employeeNumber,
+                FirstName = firstName,
+                LastName = lastName
+            });
+
+            return EmployeeMapper.MapEmployeeToDto(result);
+        }
+
+        public async Task<EmployeeDTO> AddTemperature(int employeeId, decimal temperature, TemperatureUnit temperatureUnit)
+        {
+            if (temperatureUnit == TemperatureUnit.Fahrenheit)
+                temperature = TemperatureConverter.FahrenheitToCelsius(temperature);
+
+            var result = await _employeeRepository.AddTemperatureAsync(employeeId, temperature);
+            return EmployeeMapper.MapEmployeeToDto(result);
+        }
+
+        public async Task<EmployeeDTO> GetEmployee(int employeeId)
+        {
+            var result = await _employeeRepository.GetEmployeeAsync(employeeId);
+            if (result == null)
+                throw new NotFoundException("Employee does not exist.");
+
+            return EmployeeMapper.MapEmployeeToDto(result);
         }
 
         public async Task<IEnumerable<EmployeeDTO>> GetEmployees(
@@ -29,7 +58,7 @@ namespace BodyTemp.Services.Services
             , string employeeNumber = ""
             , string firstName = ""
             , string lastName = ""
-            , TemperatureFormat tempFormat = TemperatureFormat.Celsius
+            , TemperatureUnit tempFormat = TemperatureUnit.Celsius
             , decimal? tempFrom = null
             , decimal? tempTo = null
             , DateTime? dateFrom = null
@@ -45,6 +74,11 @@ namespace BodyTemp.Services.Services
             }
 
             return employees;
+        }
+
+        public async Task<int> UpdateEmployee(int id, EmployeeDTO employee)
+        {
+            return await _employeeRepository.UpdateEmployee(id, employee);
         }
     }
 }

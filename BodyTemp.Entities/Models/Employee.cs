@@ -8,7 +8,7 @@ namespace BodyTemp.Entities.Models
 {
     public class Employee : Entity
     {
-        public string EmployeeNumber { get; set; }
+        public string? EmployeeNumber { get; set; }
 
         public string FirstName { get; set; }
 

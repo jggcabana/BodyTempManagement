@@ -10,12 +10,13 @@ namespace BodyTemp.Entities.DTOs
     public class EmployeeDTO
     {
         public int EmployeeId { get; set; }
+
         public string EmployeeNumber { get; set; }
 
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
 
-        public List<BodyTemperature> BodyTemperatures { get; set; } = new List<BodyTemperature>();
+        public List<BodyTemperatureDTO> BodyTemperatures { get; set; } = new List<BodyTemperatureDTO>();
     }
 }

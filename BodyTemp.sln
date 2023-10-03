@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BodyTemp.WebAPI", "BodyTemp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BodyTemp.Entities", "BodyTemp.Entities\BodyTemp.Entities.csproj", "{1B7825DC-D542-4735-A631-B12B50E94272}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BodyTemp.Services", "BodyTemp.Services\BodyTemp.Services.csproj", "{ACE80446-E96E-4EE2-984D-AC4A5A9F97F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BodyTemp.Services", "BodyTemp.Services\BodyTemp.Services.csproj", "{ACE80446-E96E-4EE2-984D-AC4A5A9F97F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BodyTemp.Repositories", "BodyTemp.Repositories\BodyTemp.Repositories.csproj", "{D87C97FE-88BD-4A35-A669-05268B6B03DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BodyTemp.Repositories", "BodyTemp.Repositories\BodyTemp.Repositories.csproj", "{D87C97FE-88BD-4A35-A669-05268B6B03DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BodyTemp.UnitTests", "BodyTemp.UnitTests\BodyTemp.UnitTests.csproj", "{AF06D6E9-92E3-424B-9283-22209A9D23C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{D87C97FE-88BD-4A35-A669-05268B6B03DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D87C97FE-88BD-4A35-A669-05268B6B03DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D87C97FE-88BD-4A35-A669-05268B6B03DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF06D6E9-92E3-424B-9283-22209A9D23C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF06D6E9-92E3-424B-9283-22209A9D23C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF06D6E9-92E3-424B-9283-22209A9D23C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF06D6E9-92E3-424B-9283-22209A9D23C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

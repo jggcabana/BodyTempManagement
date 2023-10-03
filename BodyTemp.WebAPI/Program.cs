@@ -3,6 +3,7 @@ using BodyTemp.Repositories.Interfaces;
 using BodyTemp.Repositories.Repositories;
 using BodyTemp.Services.Interfaces;
 using BodyTemp.Services.Services;
+using Qless.WebAPI.Middleware;
 using Serilog;
 
 namespace BodyTemp.WebAPI
@@ -18,6 +19,7 @@ namespace BodyTemp.WebAPI
                 .ReadFrom.Configuration(context.Configuration));
 
             // Add services to the container.
+            builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
             builder.Services.AddPersistence();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -40,6 +42,7 @@ namespace BodyTemp.WebAPI
 
             app.UseAuthorization();
 
+            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
             app.MapControllers();
 

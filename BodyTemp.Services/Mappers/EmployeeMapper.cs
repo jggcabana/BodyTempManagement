@@ -18,7 +18,7 @@ namespace BodyTemp.Services.Mappers
                 EmployeeNumber = employee.EmployeeNumber,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
-                BodyTemperatures = employee.BodyTemperatures.Select(x => new BodyTemperature
+                BodyTemperatures = employee.BodyTemperatures.Select(x => new BodyTemperatureDTO
                 {
                     Temperature = x.Temperature,
                     DateRecorded = x.DateRecorded

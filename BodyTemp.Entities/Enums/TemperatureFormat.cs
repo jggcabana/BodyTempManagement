@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BodyTemp.Entities.Enums
 {
-    public enum TemperatureFormat
+    public enum TemperatureUnit
     {
         Celsius,
         Fahrenheit

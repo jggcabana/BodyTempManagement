@@ -1,4 +1,6 @@
-﻿using BodyTemp.Entities.Enums;
+﻿using BodyTemp.Entities.DTOs;
+using BodyTemp.Entities.Enums;
+using BodyTemp.Entities.Exceptions;
 using BodyTemp.Entities.Models;
 using BodyTemp.Repositories.Interfaces;
 using BodyTemp.Repositories.Persistence;
@@ -8,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace BodyTemp.Repositories.Repositories
@@ -20,45 +24,86 @@ namespace BodyTemp.Repositories.Repositories
 
         }
 
+        public async Task<Employee> AddTemperatureAsync(int employeeId, decimal temperature)
+        {
+            var emp = _context.Employees.Include(e => e.BodyTemperatures).FirstOrDefault(e => e.Id == employeeId);
+            if (emp == null)
+                throw new BodyTempException("Employee not found.");
+
+            emp.BodyTemperatures.Add(new BodyTemperature
+            {
+                Temperature = temperature,
+                DateRecorded = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+            return emp;
+        }
+
         public async Task<IEnumerable<Employee>> GetAllAsync(
             int? id = null
             , string? employeeNumber = null
             , string? firstName = null
             , string? lastName = null
-            , TemperatureFormat tempFormat = TemperatureFormat.Celsius
+            , TemperatureUnit tempFormat = TemperatureUnit.Celsius
             , decimal? temperatureFrom = null
             , decimal? temperatureTo = null
             , DateTime? dateFrom = null
             , DateTime? dateTo = null
             )
         {
-            if (id != null)
-                return await _context.Employees.Include(e => e.BodyTemperatures).Where(x => x.Id == id).ToListAsync();
 
-            if (!string.IsNullOrEmpty(employeeNumber))
-                return await _context.Employees.Include(e => e.BodyTemperatures).Where(x => x.EmployeeNumber == employeeNumber).ToListAsync();
+            var query = _context.Employees.Include(e => e.BodyTemperatures)
+                            .Where(x => id == null || x.Id == id)
+                            .Where(x => employeeNumber == null || x.EmployeeNumber == employeeNumber)
+                            .Where(x => firstName == null || x.FirstName == firstName)
+                            .Where(x => lastName == null || x.LastName == lastName);
 
-            IQueryable<Employee> query = _context.Employees.Include(e => e.BodyTemperatures);
-            
-            if (!String.IsNullOrEmpty(firstName))
-                query = query.Where(e => e.FirstName == firstName);
-            
-            if (!String.IsNullOrEmpty(lastName))
-                query = query.Where(e => e.LastName == lastName);
+            bool hasQueryParams = temperatureFrom != null || temperatureTo != null || dateFrom != null || dateTo != null;
 
-            if (temperatureFrom != null)
-                query = query.Where(e => e.BodyTemperatures.Where(t => t.Temperature >= temperatureFrom).Any());
+            if (hasQueryParams)
+            {
+                query = query.Where(x => x.BodyTemperatures.Any())
+                               .Select(x => new Employee
+                               {
+                                   Id = x.Id,
+                                   EmployeeNumber = x.EmployeeNumber,
+                                   FirstName = x.FirstName,
+                                   LastName = x.LastName,
+                                   BodyTemperatures = x.BodyTemperatures
+                                        .Where(t => temperatureFrom == null || t.Temperature >= temperatureFrom)
+                                        .Where(t => temperatureTo == null || t.Temperature <= temperatureTo)
+                                        .Where(t => dateFrom == null || t.DateRecorded >= dateFrom)
+                                        .Where(t => dateTo == null || t.DateRecorded >= dateTo)
+                                        .ToList()
+                               });
 
-            if (temperatureTo != null)
-                query = query.Where(e => e.BodyTemperatures.Where(t => t.Temperature <= temperatureTo).Any());
-
-            if (dateFrom != null)
-                query = query.Where(e => e.BodyTemperatures.Where(t => t.DateRecorded <= dateFrom).Any());
-
-            if (dateFrom != null)
-                query = query.Where(e => e.BodyTemperatures.Where(t => t.DateRecorded >= dateTo).Any());
+                query = query.Where(x => x.BodyTemperatures.Any());
+            }
 
             return await query.ToListAsync();
+        }
+
+        public async Task<Employee> GetByEmployeeNumberAsync(string employeeNumber)
+        {
+            return await _context.Employees.FirstOrDefaultAsync(x => x.EmployeeNumber == employeeNumber);
+        }
+
+        public async Task<Employee> GetEmployeeAsync(int employeeId)
+        {
+            return await _context.Employees.Include(e => e.BodyTemperatures).FirstOrDefaultAsync(e => e.Id == employeeId);
+        }
+
+        public async Task<int> UpdateEmployee(int id, EmployeeDTO employee)
+        {
+            var existing = await this.GetEmployeeAsync(id);
+
+            if (existing == null)
+                throw new NotFoundException("Employee does not exist.");
+
+            _context.Entry(existing).CurrentValues.SetValues(employee);
+
+            return await _context.SaveChangesAsync();
         }
     }
 }

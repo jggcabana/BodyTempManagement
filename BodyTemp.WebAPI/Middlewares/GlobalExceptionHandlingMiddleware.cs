@@ -14,28 +14,36 @@ namespace Qless.WebAPI.Middleware
             _logger = logger;
         }
 
+        private async Task HandleError<TException>(TException e, HttpContext context, HttpStatusCode code)
+            where TException : Exception
+        {
+            _logger.LogError(e, e.Message);
+            context.Response.StatusCode = (int)code;
+
+            string json = JsonSerializer.Serialize(new BaseResponse
+            {
+                Success = false,
+                Message = e.Message,
+            });
+
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(json);
+        }
+
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
             {
                 await next(context);
             }
-
             catch (BodyTempException e)
             {
-                _logger.LogError(e, e.Message);
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-                string json = JsonSerializer.Serialize(new BaseResponse
-                {
-                    Success = false,
-                    Message = e.Message,
-                });
-
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(json);
+               await HandleError<BodyTempException>(e, context, HttpStatusCode.BadRequest);
             }
-
+            catch (NotFoundException e)
+            {
+                await HandleError<NotFoundException>(e, context, HttpStatusCode.NotFound);
+            }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);

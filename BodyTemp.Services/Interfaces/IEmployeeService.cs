@@ -1,5 +1,6 @@
 ﻿using BodyTemp.Entities.DTOs;
 using BodyTemp.Entities.Enums;
+using BodyTemp.Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,19 @@ namespace BodyTemp.Services.Interfaces
             , string? employeeNumber = null
             , string? firstName = null
             , string? lastName = null
-            , TemperatureFormat tempFormat = TemperatureFormat.Celsius
+            , TemperatureUnit tempFormat = TemperatureUnit.Celsius
             , decimal? tempFrom = null
             , decimal? tempTo = null
             , DateTime? dateFrom = null
             , DateTime? dateTo = null
             );
 
-        public Task<IEnumerable<EmployeeDTO>> GetEmployee(int employeeId);
+        public Task<EmployeeDTO> AddEmployee(string employeeNumber, string firstName, string lastName);
+
+        public Task<int> UpdateEmployee(int employeeId, EmployeeDTO employee);
+
+        public Task<EmployeeDTO> GetEmployee(int employeeId);
+
+        public Task<EmployeeDTO> AddTemperature(int employeeId, decimal temperature, TemperatureUnit temperatureUnit);
     }
 }
